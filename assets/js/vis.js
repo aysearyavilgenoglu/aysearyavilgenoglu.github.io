@@ -46,10 +46,25 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- Data-driven visualizations (Vega-Lite) ---
+/**
+ * Load video game data: prefers dataset/videogames_long.csv (D3 autoType),
+ * falls back to assets/img/data/videogames_wide.csv.
+ * Returns { wideData, regionalLong } for use in all four specs.
+ */
 async function fetchVideoGameData() {
-  const response = await fetch("assets/img/data/videogames_wide.csv");
+  const longUrl = "dataset/videogames_long.csv";
+  const wideUrl = "assets/img/data/videogames_wide.csv";
+
+  const tryLong = await fetch(longUrl);
+  if (tryLong.ok) {
+    const csvText = await tryLong.text();
+    const longRows = d3.csvParse(csvText, d3.autoType);
+    return longToWideAndRegional(longRows);
+  }
+
+  const response = await fetch(wideUrl);
   const csvText = await response.text();
-  return d3.csvParse(csvText, (d) => ({
+  const wideData = d3.csvParse(csvText, (d) => ({
     ...d,
     Year: d.Year != null ? +d.Year : null,
     NA_Sales: +d.NA_Sales || 0,
@@ -58,6 +73,44 @@ async function fetchVideoGameData() {
     Other_Sales: +d.Other_Sales || 0,
     Global_Sales: +d.Global_Sales || 0,
   }));
+  return { wideData, regionalLong: wideToLongRegional(wideData) };
+}
+
+/** Convert long-format rows (Region, Sales) into wideData + regionalLong */
+function longToWideAndRegional(longRows) {
+  const regionalLong = longRows.map((d) => ({
+    Platform: d.Platform,
+    Genre: d.Genre,
+    Year: d.Year,
+    Region: d.Region,
+    Sales: Number(d.Sales) || 0,
+  }));
+  const byGame = d3.group(
+    longRows,
+    (d) => [d.Platform, d.Year, d.Genre, d.Publisher].join("\t")
+  );
+  const wideData = [];
+  byGame.forEach((rows) => {
+    const r0 = rows[0];
+    const g = Number(r0.Global_Sales) || 0;
+    const na = rows.find((x) => x.Region === "North America");
+    const eu = rows.find((x) => x.Region === "Europe");
+    const jp = rows.find((x) => x.Region === "Japan");
+    const other = rows.find((x) => x.Region === "Other");
+    wideData.push({
+      Name: r0.Name,
+      Platform: r0.Platform,
+      Year: r0.Year,
+      Genre: r0.Genre,
+      Publisher: r0.Publisher,
+      NA_Sales: na ? Number(na.Sales) || 0 : 0,
+      EU_Sales: eu ? Number(eu.Sales) || 0 : 0,
+      JP_Sales: jp ? Number(jp.Sales) || 0 : 0,
+      Other_Sales: other ? Number(other.Sales) || 0 : 0,
+      Global_Sales: g,
+    });
+  });
+  return { wideData, regionalLong };
 }
 
 /** Convert wide regional columns to long format for regional charts */
@@ -94,15 +147,14 @@ function render(viewId, spec) {
 async function initDataVisualizations() {
   const hasContainers =
     document.getElementById("vis1") && document.getElementById("vis2");
-  if (!hasContainers || typeof vl === "undefined") return;
+  if (!hasContainers || typeof vl === "undefined" || typeof d3 === "undefined") return;
 
-  const data = await fetchVideoGameData();
-  const regionalLong = wideToLongRegional(data);
+  const { wideData, regionalLong } = await fetchVideoGameData();
 
   // VIS 1: Genre × Platform heatmap (Global Sales)
-  const spec1 = vl
+  const vlSpec1 = vl
     .markRect()
-    .data(data)
+    .data(wideData)
     .encode(
       vl.x().fieldN("Genre").title("Genre"),
       vl.y().fieldN("Platform").title("Platform"),
@@ -121,9 +173,9 @@ async function initDataVisualizations() {
     .toSpec();
 
   // VIS 2: Sales over time by Genre (stacked area)
-  const spec2 = vl
+  const vlSpec2 = vl
     .markArea()
-    .data(data)
+    .data(wideData)
     .encode(
       vl.x().fieldQ("Year").title("Year").scale({ zero: false }),
       vl.y().aggregate("sum").fieldQ("Global_Sales").title("Global Sales (M)"),
@@ -139,7 +191,7 @@ async function initDataVisualizations() {
     .toSpec();
 
   // VIS 3: Regional sales by Platform (stacked bar)
-  const spec3 = vl
+  const vlSpec3 = vl
     .markBar()
     .data(regionalLong)
     .encode(
@@ -158,7 +210,7 @@ async function initDataVisualizations() {
 
   // VIS 4: Top publishers by Global Sales (horizontal bar)
   const publisherTotals = d3.rollup(
-    data,
+    wideData,
     (v) => d3.sum(v, (d) => d.Global_Sales),
     (d) => d.Publisher
   );
@@ -167,7 +219,7 @@ async function initDataVisualizations() {
     .sort((a, b) => b.Global_Sales - a.Global_Sales)
     .slice(0, 15);
 
-  const spec4 = vl
+  const vlSpec4 = vl
     .markBar()
     .data(topPublishers)
     .encode(
@@ -184,10 +236,10 @@ async function initDataVisualizations() {
     .toSpec();
 
   await Promise.all([
-    render("#vis1", spec1),
-    render("#vis2", spec2),
-    render("#vis3", spec3),
-    render("#vis4", spec4),
+    render("#vis1", vlSpec1),
+    render("#vis2", vlSpec2),
+    render("#vis3", vlSpec3),
+    render("#vis4", vlSpec4),
   ]);
 }
 
