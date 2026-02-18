@@ -41,9 +41,38 @@
         </p>
         <div id="svg-art-container" class="svg-container"></div>
       </div>
+
+      <h2 class="mt-5 mb-3">Video Game Sales Data (Vega-Lite)</h2>
+      <p class="mb-4">Four interactive charts built from <code>videogames_wide.csv</code>.</p>
+
+      <div class="visualizations-section">
+        <h3>1. Genre × Platform Heatmap</h3>
+        <p>Global sales intensity across game genres and platforms.</p>
+        <div id="vis1" class="data-viz-container"></div>
+      </div>
+      <div class="visualizations-section">
+        <h3>2. Sales Over Time by Genre</h3>
+        <p>Stacked area of global sales by year and genre.</p>
+        <div id="vis2" class="data-viz-container"></div>
+      </div>
+      <div class="visualizations-section">
+        <h3>3. Regional Sales by Platform</h3>
+        <p>NA, Europe, Japan, and Other sales per platform.</p>
+        <div id="vis3" class="data-viz-container"></div>
+      </div>
+      <div class="visualizations-section">
+        <h3>4. Top 15 Publishers by Global Sales</h3>
+        <p>Publishers ranked by total global sales (M).</p>
+        <div id="vis4" class="data-viz-container"></div>
+      </div>
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite-api@5.6.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
   <script src="assets/js/vis.js"></script>
 </body>
 </html>
