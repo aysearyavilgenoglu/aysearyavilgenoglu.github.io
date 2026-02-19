@@ -6,66 +6,97 @@
   <title>Interactive Visualizations – Ayse Arya Vilgenoglu</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-    crossorigin="anonymous"
   />
+  <style>
+    /* Grafiklerin kart dışına taşmasını engellemek için ek stil */
+    .data-viz-container {
+      width: 100%;
+      min-height: 350px;
+      overflow: hidden;
+    }
+    .card {
+      border: none;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
 </head>
-<body>
-  <main class="visualizations-page">
-    <header class="visualizations-header">
-      <h1>Interactive Visualizations</h1>
-      <p>
-        This page showcases SVG-based visualizations created with JavaScript – a
-        blend of architectural thinking and computational design.
+<body class="bg-light">
+  <main class="container py-5">
+    <header class="text-center mb-5">
+      <h1 class="display-4 fw-bold">Interactive Visualizations</h1>
+      <p class="lead text-muted mx-auto" style="max-width: 700px;">
+        A showcase of SVG-based visualizations and data exploration, 
+        blending computational design with architectural thinking.
       </p>
-      <a href="index.html" class="btn btn-outline-primary btn-sm">← Back to Portfolio</a>
+      <a href="index.html" class="btn btn-primary mt-3">← Back to Portfolio</a>
     </header>
 
-    <section class="visualizations-grid">
-      <div class="visualizations-section">
-        <h2>Skill Bar Chart</h2>
-        <p>
-          A simple SVG bar chart representing selected skills. This demonstrates
-          how data can be expressed visually using basic primitives.
-        </p>
-        <div id="svg-static-container" class="svg-container"></div>
+    <div class="row g-4 mb-5">
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100 p-4">
+          <h2 class="h4 mb-3">Skill Bar Chart</h2>
+          <p class="text-secondary small">Visualizing skills using basic SVG primitives.</p>
+          <div id="svg-static-container" class="svg-container border-top pt-3"></div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100 p-4">
+          <h2 class="h4 mb-3">Generative Art</h2>
+          <p class="text-secondary small">Parametric design thinking translated to algorithmic circles.</p>
+          <div id="svg-art-container" class="svg-container border-top pt-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-5">
+    <h2 class="text-center mb-2">Video Game Sales Analysis</h2>
+    <p class="text-center text-muted mb-5">Interactive insights built from <code>videogames_wide.csv</code></p>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card shadow-sm p-4 h-100 d-flex flex-column">
+          <h5 class="fw-bold">1. Genre × Platform Heatmap</h5>
+          <p class="small text-muted">Global sales intensity across different segments.</p>
+          <div id="vis1" class="data-viz-container"></div>
+          <p class="small text-dark"><strong>Insight:</strong> Action games on PS3 and Sports games on Wii show the highest global sales density. This suggests that certain genres are highly platform-dependent for their success.</p>
+        </div>
+        
       </div>
 
-      <div class="visualizations-section">
-        <h2>Generative Dot Composition</h2>
-        <p>
-          A generative composition of colored circles illustrating
-          parametric/algorithmic design thinking translated to the browser.
-        </p>
-        <div id="svg-art-container" class="svg-container"></div>
+      <div class="col-lg-6">
+       <div class="card shadow-sm p-4 h-100 d-flex flex-column">
+          <h5 class="fw-bold">2. Sales Over Time by Genre</h5>
+          <p class="small text-muted">Tracking global trends through stacked area analysis.</p>
+          <div id="vis2" class="data-viz-container"></div>
+          <br> <br><p class="small text-dark"><strong>Insight:</strong> The industry saw a massive boom between 2005 and 2010. While Sports games were dominant early on, Action games took over the lead in total global sales after 2008.</p>
+        </div>
       </div>
 
-      <h2 class="mt-5 mb-3">Video Game Sales Data (Vega-Lite)</h2>
-      <p class="mb-4">Four interactive charts built from <code>videogames_wide.csv</code>.</p>
+      <div class="col-lg-6">
+        <div class="card shadow-sm p-4 h-100 d-flex flex-column">
+          <h5 class="fw-bold">3. Regional Sales by Platform</h5>
+          <p class="small text-muted">Distribution of sales across major global markets.</p>
+          <div id="vis3" class="data-viz-container"></div>
+                    <p class="small text-dark"><strong>Insight:</strong> While North America and Europe show similar platform preferences, Japan has a unique market where handheld platforms like DS and 3DS represent a much larger share of the total sales compared to Xbox or PC.</p>
 
-      <div class="visualizations-section">
-        <h3>1. Genre × Platform Heatmap</h3>
-        <p>Global sales intensity across game genres and platforms.</p>
-        <div id="vis1" class="data-viz-container"></div>
+        </div>
       </div>
-      <div class="visualizations-section">
-        <h3>2. Sales Over Time by Genre</h3>
-        <p>Stacked area of global sales by year and genre.</p>
-        <div id="vis2" class="data-viz-container"></div>
+
+      <div class="col-lg-6">
+        <div class="card shadow-sm p-4 h-100 d-flex flex-column">
+          <h5 class="fw-bold">4. Top 15 Publishers</h5>
+          <p class="small text-muted">Ranking industry leaders by total global revenue.</p>
+          <div id="vis4" class="data-viz-container"></div>
+          <br><p class="small text-dark"><strong>Insight:</strong> Nintendo leads the global market by a significant margin, primarily due to its strong first-party titles. The gap between the top publisher and others highlights the impact of exclusive franchises on global revenue.</p>
+
+        </div>
       </div>
-      <div class="visualizations-section">
-        <h3>3. Regional Sales by Platform</h3>
-        <p>NA, Europe, Japan, and Other sales per platform.</p>
-        <div id="vis3" class="data-viz-container"></div>
-      </div>
-      <div class="visualizations-section">
-        <h3>4. Top 15 Publishers by Global Sales</h3>
-        <p>Publishers ranked by total global sales (M).</p>
-        <div id="vis4" class="data-viz-container"></div>
-      </div>
-    </section>
+    </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>

@@ -1,12 +1,19 @@
+// --- 1. SVG Arts and Static Visuals ---
 document.addEventListener("DOMContentLoaded", () => {
+ 
+const renderStaticArts = () => {
   const svgNS = "http://www.w3.org/2000/svg";
 
-  // --- 1. Static SVG (Skill Bar Chart) ---
+  // 1. Skill Bar Chart Fix
   const staticContainer = document.getElementById("svg-static-container");
   if (staticContainer) {
+    staticContainer.innerHTML = ""; // Clear existing content
+    
     const staticSvg = document.createElementNS(svgNS, "svg");
+    // Ensure height is explicitly set so it doesn't collapse to 0
     staticSvg.setAttribute("width", "100%");
-    staticSvg.setAttribute("height", "200");
+    staticSvg.setAttribute("height", "160"); 
+    staticSvg.style.display = "block";
 
     const skills = [
       { name: "3D Modeling", val: 280, color: "#2c3e50" },
@@ -14,23 +21,75 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     skills.forEach((s, i) => {
+      const g = document.createElementNS(svgNS, "g");
+      
+      // Bar
       const rect = document.createElementNS(svgNS, "rect");
       rect.setAttribute("x", "10");
-      rect.setAttribute("y", i * 50 + 20);
+      rect.setAttribute("y", i * 60 + 20);
       rect.setAttribute("width", s.val);
-      rect.setAttribute("height", "30");
+      rect.setAttribute("height", "35");
       rect.setAttribute("fill", s.color);
-      staticSvg.appendChild(rect);
+      rect.setAttribute("rx", "5"); // Rounded corners
+
+      // Label
+      const text = document.createElementNS(svgNS, "text");
+      text.setAttribute("x", "20");
+      text.setAttribute("y", i * 60 + 43);
+      text.setAttribute("fill", "white");
+      text.style.fontSize = "14px";
+      text.style.fontWeight = "bold";
+      text.style.fontFamily = "Arial, sans-serif";
+      text.textContent = s.name;
+
+      g.appendChild(rect);
+      g.appendChild(text);
+      staticSvg.appendChild(g);
     });
     staticContainer.appendChild(staticSvg);
   }
 
-  // --- 2. Creative JS Art (Moving Dots/Circles) ---
+  // 2. Generative Art (Circles)
+  const artContainer = document.getElementById("svg-art-container");
+  if (artContainer) {
+    artContainer.innerHTML = "";
+    const artSvg = document.createElementNS(svgNS, "svg");
+    artSvg.setAttribute("viewBox", "0 0 500 300");
+    artSvg.style.background = "#f9f9f9";
+    artSvg.style.width = "100%";
+    artSvg.style.height = "auto";
+
+    for (let i = 0; i < 30; i++) {
+      const circle = document.createElementNS(svgNS, "circle");
+      circle.setAttribute("cx", Math.random() * 500);
+      circle.setAttribute("cy", Math.random() * 300);
+      circle.setAttribute("r", Math.random() * 15 + 2);
+      circle.setAttribute("fill", `hsl(${Math.random() * 360}, 60%, 70%)`);
+      circle.setAttribute("opacity", "0.6");
+      artSvg.appendChild(circle);
+    }
+    artContainer.appendChild(artSvg);
+  }
+};
+
+// Start everything
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    renderStaticArts();
+    initDataVisualizations();
+  });
+} else {
+  renderStaticArts();
+  initDataVisualizations();
+}
+
+  // Generative Art Composition (Circles)
   const artContainer = document.getElementById("svg-art-container");
   if (artContainer) {
     const artSvg = document.createElementNS(svgNS, "svg");
     artSvg.setAttribute("viewBox", "0 0 500 300");
     artSvg.style.background = "#f9f9f9";
+    artSvg.style.width = "100%"; 
 
     for (let i = 0; i < 30; i++) {
       const circle = document.createElementNS(svgNS, "circle");
@@ -45,75 +104,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// --- Data-driven visualizations (Vega-Lite) ---
-/**
- * Load video game data: prefers dataset/videogames_long.csv (D3 autoType),
- * falls back to assets/img/data/videogames_wide.csv.
- * Returns { wideData, regionalLong } for use in all four specs.
- */
+// --- 2. Data Loading and Visualizations ---
+
 async function fetchVideoGameData() {
-  const longUrl = "dataset/videogames_long.csv";
-  const wideUrl = "assets/img/data/videogames_wide.csv";
-
-  const tryLong = await fetch(longUrl);
-  if (tryLong.ok) {
-    const csvText = await tryLong.text();
-    const longRows = d3.csvParse(csvText, d3.autoType);
-    return longToWideAndRegional(longRows);
+  const wideUrl = "assets/img/data/videogames_wide.csv"; 
+  try {
+    const response = await fetch(wideUrl);
+    if (!response.ok) throw new Error("CSV file not found!");
+    const csvText = await response.text();
+    const wideData = d3.csvParse(csvText, d3.autoType);
+    return { wideData, regionalLong: wideToLongRegional(wideData) };
+  } catch (e) {
+    console.error("Data loading error:", e);
+    return { wideData: [], regionalLong: [] };
   }
-
-  const response = await fetch(wideUrl);
-  const csvText = await response.text();
-  const wideData = d3.csvParse(csvText, (d) => ({
-    ...d,
-    Year: d.Year != null ? +d.Year : null,
-    NA_Sales: +d.NA_Sales || 0,
-    EU_Sales: +d.EU_Sales || 0,
-    JP_Sales: +d.JP_Sales || 0,
-    Other_Sales: +d.Other_Sales || 0,
-    Global_Sales: +d.Global_Sales || 0,
-  }));
-  return { wideData, regionalLong: wideToLongRegional(wideData) };
 }
 
-/** Convert long-format rows (Region, Sales) into wideData + regionalLong */
-function longToWideAndRegional(longRows) {
-  const regionalLong = longRows.map((d) => ({
-    Platform: d.Platform,
-    Genre: d.Genre,
-    Year: d.Year,
-    Region: d.Region,
-    Sales: Number(d.Sales) || 0,
-  }));
-  const byGame = d3.group(
-    longRows,
-    (d) => [d.Platform, d.Year, d.Genre, d.Publisher].join("\t")
-  );
-  const wideData = [];
-  byGame.forEach((rows) => {
-    const r0 = rows[0];
-    const g = Number(r0.Global_Sales) || 0;
-    const na = rows.find((x) => x.Region === "North America");
-    const eu = rows.find((x) => x.Region === "Europe");
-    const jp = rows.find((x) => x.Region === "Japan");
-    const other = rows.find((x) => x.Region === "Other");
-    wideData.push({
-      Name: r0.Name,
-      Platform: r0.Platform,
-      Year: r0.Year,
-      Genre: r0.Genre,
-      Publisher: r0.Publisher,
-      NA_Sales: na ? Number(na.Sales) || 0 : 0,
-      EU_Sales: eu ? Number(eu.Sales) || 0 : 0,
-      JP_Sales: jp ? Number(jp.Sales) || 0 : 0,
-      Other_Sales: other ? Number(other.Sales) || 0 : 0,
-      Global_Sales: g,
-    });
-  });
-  return { wideData, regionalLong };
-}
-
-/** Convert wide regional columns to long format for regional charts */
 function wideToLongRegional(rows) {
   const long = [];
   const regions = [
@@ -125,127 +131,78 @@ function wideToLongRegional(rows) {
   rows.forEach((row) => {
     regions.forEach(({ key, name }) => {
       long.push({
-        Platform: row.Platform,
+        Platform: row.Platform, 
         Genre: row.Genre,
-        Year: row.Year,
-        Region: name,
-        Sales: row[key] || 0,
+        Year: row.Year, 
+        Region: name, 
+        Sales: row[key] || 0
       });
     });
   });
   return long;
 }
 
-function render(viewId, spec) {
-  const el = document.querySelector(viewId);
-  if (!el || typeof vegaEmbed !== "function") return Promise.resolve();
-  return vegaEmbed(viewId, spec, { actions: { export: true, source: false, compiled: false } }).then(
-    (result) => result.view.run()
-  );
-}
-
 async function initDataVisualizations() {
-  const hasContainers =
-    document.getElementById("vis1") && document.getElementById("vis2");
-  if (!hasContainers || typeof vl === "undefined" || typeof d3 === "undefined") return;
+  if (typeof vl === "undefined" || typeof d3 === "undefined" || typeof vegaEmbed === "undefined") {
+    console.error("Libraries not loaded!");
+    return;
+  }
 
   const { wideData, regionalLong } = await fetchVideoGameData();
+  if (!wideData || wideData.length === 0) {
+    console.error("No data available to render charts.");
+    return;
+  }
 
-  // VIS 1: Genre × Platform heatmap (Global Sales)
-  const vlSpec1 = vl
-    .markRect()
-    .data(wideData)
-    .encode(
-      vl.x().fieldN("Genre").title("Genre"),
-      vl.y().fieldN("Platform").title("Platform"),
-      vl.color()
-        .sum("Global_Sales")
-        .scale({ scheme: "blues" })
-        .title("Global Sales (M)"),
-      vl.tooltip([
-        vl.field("Genre").title("Genre"),
-        vl.field("Platform").title("Platform"),
-        vl.field("Global_Sales").aggregate("sum").title("Global Sales (M)"),
-      ])
-    )
-    .width(600)
-    .height(400)
-    .toSpec();
+  // Fixed sizes to prevent layout shift and ensure visibility
+  const chartWidth = 400; 
+  const chartHeight = 300;
 
-  // VIS 2: Sales over time by Genre (stacked area)
-  const vlSpec2 = vl
-    .markArea()
-    .data(wideData)
-    .encode(
-      vl.x().fieldQ("Year").title("Year").scale({ zero: false }),
-      vl.y().aggregate("sum").fieldQ("Global_Sales").title("Global Sales (M)"),
-      vl.color().fieldN("Genre").title("Genre"),
-      vl.tooltip([
-        vl.field("Year").title("Year"),
-        vl.field("Genre").title("Genre"),
-        vl.field("Global_Sales").aggregate("sum").title("Sales (M)"),
-      ])
-    )
-    .width(600)
-    .height(400)
-    .toSpec();
+  // VIS 1: Heatmap
+  const vlSpec1 = vl.markRect().data(wideData).encode(
+    vl.x().fieldN("Genre"),
+    vl.y().fieldN("Platform"),
+    vl.color().sum("Global_Sales").scale({ scheme: "blues" }),
+    vl.tooltip([vl.fieldN("Genre"), vl.fieldN("Platform"), vl.sum("Global_Sales")])
+  ).width(chartWidth).height(chartHeight).toSpec();
 
-  // VIS 3: Regional sales by Platform (stacked bar)
-  const vlSpec3 = vl
-    .markBar()
-    .data(regionalLong)
-    .encode(
-      vl.x().fieldN("Platform").title("Platform"),
-      vl.y().aggregate("sum").fieldQ("Sales").title("Sales (M)"),
-      vl.color().fieldN("Region").title("Region"),
-      vl.tooltip([
-        vl.field("Platform").title("Platform"),
-        vl.field("Region").title("Region"),
-        vl.field("Sales").aggregate("sum").title("Sales (M)"),
-      ])
-    )
-    .width(600)
-    .height(400)
-    .toSpec();
+  // VIS 2: Stacked Area Chart
+  const vlSpec2 = vl.markArea().data(wideData).encode(
+    vl.x().fieldQ("Year").scale({ zero: false }),
+    vl.y().sum("Global_Sales").title("Global Sales (M)"),
+    vl.color().fieldN("Genre"),
+    vl.tooltip([vl.fieldQ("Year"), vl.fieldN("Genre"), vl.sum("Global_Sales")])
+  ).width(chartWidth).height(chartHeight).toSpec();
 
-  // VIS 4: Top publishers by Global Sales (horizontal bar)
-  const publisherTotals = d3.rollup(
-    wideData,
-    (v) => d3.sum(v, (d) => d.Global_Sales),
-    (d) => d.Publisher
-  );
-  const topPublishers = Array.from(publisherTotals.entries())
+  // VIS 3: Regional Sales Bar Chart
+  const vlSpec3 = vl.markBar().data(regionalLong).encode(
+    vl.x().fieldN("Platform"),
+    vl.y().sum("Sales").title("Sales (M)"),
+    vl.color().fieldN("Region"),
+    vl.tooltip([vl.fieldN("Platform"), vl.fieldN("Region"), vl.sum("Sales")])
+  ).width(chartWidth).height(chartHeight).toSpec();
+
+  // VIS 4: Top 15 Publishers
+  const publisherTotals = d3.rollup(wideData, v => d3.sum(v, d => d.Global_Sales), d => d.Publisher);
+  const topData = Array.from(publisherTotals.entries())
     .map(([Publisher, Global_Sales]) => ({ Publisher, Global_Sales }))
-    .sort((a, b) => b.Global_Sales - a.Global_Sales)
-    .slice(0, 15);
+    .sort((a, b) => b.Global_Sales - a.Global_Sales).slice(0, 15);
 
-  const vlSpec4 = vl
-    .markBar()
-    .data(topPublishers)
-    .encode(
-      vl.y().fieldN("Publisher").title("Publisher").sort("-x"),
-      vl.x().fieldQ("Global_Sales").title("Global Sales (M)"),
-      vl.color().value("#3498db"),
-      vl.tooltip([
-        vl.field("Publisher").title("Publisher"),
-        vl.field("Global_Sales").title("Global Sales (M)"),
-      ])
-    )
-    .width(600)
-    .height(400)
-    .toSpec();
+  const vlSpec4 = vl.markBar().data(topData).encode(
+    vl.y().fieldN("Publisher").sort("-x"),
+    vl.x().fieldQ("Global_Sales").title("Total Sales (M)"),
+    vl.tooltip([vl.fieldN("Publisher"), vl.fieldQ("Global_Sales")])
+  ).width(chartWidth).height(chartHeight).toSpec();
 
-  await Promise.all([
-    render("#vis1", vlSpec1),
-    render("#vis2", vlSpec2),
-    render("#vis3", vlSpec3),
-    render("#vis4", vlSpec4),
-  ]);
+  // Direct rendering
+  vegaEmbed("#vis1", vlSpec1, { actions: false });
+  vegaEmbed("#vis2", vlSpec2, { actions: false });
+  vegaEmbed("#vis3", vlSpec3, { actions: false });
+  vegaEmbed("#vis4", vlSpec4, { actions: false });
 }
 
-// Run when DOM and scripts (e.g. vega-lite-api) are ready
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initDataVisualizations);
-} else {
+// Ensure the function runs after all scripts are ready
+window.onload = () => {
   initDataVisualizations();
-}
+  
+};
