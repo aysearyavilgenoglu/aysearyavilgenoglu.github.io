@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Interactive Graphic Design</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        margin: 0;
+        background: #ffffff;
+        color: #111;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      .page-shell {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 20px 60px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .canvas-wrap {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 68px 24px 24px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      }
+
+      .canvas-wrap .instruction-text {
+        position: absolute;
+        top: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 48px);
+        max-width: 620px;
+        text-align: center;
+        color: #1f2937;
+        font-size: 1rem;
+        line-height: 1.5;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        padding: 12px 16px;
+      }
+
+      canvas {
+        display: block;
+        margin: 0 auto;
+        border-radius: 12px;
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <div class="topbar">
+        <a href="iat806.html" class="btn btn-outline-primary btn-sm"
+          >← Back to Lab01</a
+        >
+      </div>
+
+      <div class="canvas-wrap">
+        <div class="instruction-text">
+          Move your mouse around and discover how the shapes turn red when you
+          hover over them.
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+        <script src="sketch.js"></script>
+      </div>
+    </div>
+  </body>
+</html>
