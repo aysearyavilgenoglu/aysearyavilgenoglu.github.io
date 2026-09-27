@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>IAT806</title>
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <title>IAT806 Labs</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -45,17 +44,6 @@
         border: 1px solid #e5e7eb;
         text-decoration: none;
         color: inherit;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease,
-          border-color 0.2s ease;
-      }
-
-      .lab-card:hover {
-        text-decoration: none;
-        transform: translateY(-4px);
-        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.05);
-        border-color: #0d6efd;
       }
 
       .lab-card h3 {
@@ -78,16 +66,6 @@
         color: #4b5563;
       }
 
-      h1 {
-        margin-bottom: 16px;
-        font-size: clamp(2rem, 4vw, 3rem);
-      }
-
-      p {
-        color: #444;
-        line-height: 1.7;
-      }
-
       @media (max-width: 700px) {
         .lab-list {
           grid-template-columns: 1fr;
@@ -99,29 +77,25 @@
     <div class="page-shell">
       <div class="content-box">
         <a
-          href="index.html#projects"
+          href="../../index.html#projects"
           class="btn btn-outline-primary btn-sm mb-3"
-          >← Back to Projects</a
+          >← Back to Portfolio</a
         >
-        <h1>IAT806 - Interdisciplinary Design Approaches to Computing</h1>
+        <h1>IAT806 Lab Collection</h1>
 
         <div class="lab-list">
-          <a href="interactive-graphic-design.html" class="lab-card">
+          <a href="../../interactive-graphic-design.html" class="lab-card">
             <span class="lab-tag">Lab01</span>
             <h3>Interactive Graphic Design</h3>
-            <p>Open assignment details and view the interactive sketch.</p>
+            <p>Open the first interactive design assignment.</p>
           </a>
 
-          <a href="turtle-design.html" class="lab-card">
-            <span class="lab-tag">Lab01</span>
-            <h3>Turtle Design</h3>
-            <p>Open and view my turtle drawing.</p>
-          </a>
-
-          <a href="projects/iat-806/lab-02/index.html" class="lab-card">
+          <a href="lab-02/index.html" class="lab-card">
             <span class="lab-tag">Lab02</span>
             <h3>Make the Ball Yours</h3>
-            <p>Open and play with the interactive bouncing-ball assignment.</p>
+            <p>
+              Play with a colorful bouncing ball that reacts to clicks and keys.
+            </p>
           </a>
         </div>
       </div>

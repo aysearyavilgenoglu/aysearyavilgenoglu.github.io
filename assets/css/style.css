@@ -159,9 +159,11 @@ li {
 .project-nav {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: center;
   gap: 12px;
-  margin: 18px 0 12px;
+  margin: 18px auto 12px;
+  max-width: 980px;
 }
 
 .project-section-link {
