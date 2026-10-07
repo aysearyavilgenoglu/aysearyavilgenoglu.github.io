@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lab03</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        margin: 0;
+        background: #f5f7fb;
+        color: #111827;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      .page-shell {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 32px 20px 60px;
+      }
+
+      .animation-wrap {
+        padding: 22px 18px 18px;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+      }
+
+      #sketch-holder {
+        display: flex;
+        justify-content: center;
+      }
+
+      canvas {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+        border-radius: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <a href="../../../iat806.html" class="btn btn-outline-primary btn-sm mb-3"
+        >← Back to IAT806</a
+      >
+      <section class="animation-wrap">
+        <h1 class="h2 mb-2">Lab03</h1>
+        <p class="mb-3">Click to make Arya laugh</p>
+        <div id="sketch-holder"></div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@2.3.3/lib/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5.sound@0.4.1/dist/p5.sound.min.js"></script>
+    <script src="../../../laugh-%20sketch.js"></script>
+  </body>
+</html>
