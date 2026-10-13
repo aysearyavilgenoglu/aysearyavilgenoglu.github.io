@@ -9,7 +9,7 @@ let drawingFinished;
 let particles;
 
 function preload() {
-  turtleImage = loadImage("assets/img/IMG_6303.jpeg");
+  turtleImage = loadImage("../../../assets/img/IMG_6303.jpeg");
 }
 
 function setup() {

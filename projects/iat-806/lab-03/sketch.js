@@ -2,7 +2,7 @@ let frames = [];
 let laughSound;
 const NUM_FRAMES = 8;
 
-const assetsUrl = new URL("assets/img/", document.currentScript.src);
+const assetsUrl = new URL("assets/", document.currentScript.src);
 let currentFrame = 0;
 let animationPlaying = false;
 let backgroundColor;
@@ -14,7 +14,7 @@ async function setup() {
   backgroundColor = color(255, 240, 245);
 
   for (let i = 0; i < NUM_FRAMES; i++) {
-    frames.push(await loadImage(new URL(`laughframes/laugh${i}.png`, assetsUrl).href));
+    frames.push(await loadImage(new URL(`images/laugh${i}.png`, assetsUrl).href));
   }
   laughSound = await loadSound(new URL("sounds/sound.mp3", assetsUrl).href);
 }
