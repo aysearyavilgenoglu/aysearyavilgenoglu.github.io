@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lab 04 - The Dance Floor | Ayse Arya Vilgenoglu</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        margin: 0;
+        background: #f5f7fb;
+        color: #111827;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      .page-shell {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 32px 20px 60px;
+      }
+
+      .assignment-card {
+        padding: 28px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+      }
+
+      #sketch-holder {
+        display: flex;
+        justify-content: center;
+        margin-top: 24px;
+      }
+
+      canvas {
+        display: block;
+        max-width: 100%;
+        height: auto !important;
+        border-radius: 12px;
+      }
+
+      @media (max-width: 600px) {
+        .assignment-card {
+          padding: 20px 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <a href="../../../iat806.html" class="btn btn-outline-primary btn-sm mb-3"
+        >← Back to IAT806</a
+      >
+      <section class="assignment-card">
+        <p class="mb-2 text-uppercase fw-bold text-primary">Assignment</p>
+        <h1 class="h2 mb-2">Lab 04 - The Dance Floor</h1>
+        <p class="mb-0">
+          Move your mouse across the floor to change how quickly the dancers
+          move. The checkerboard alternates between a dance and a jump animation.
+        </p>
+        <div id="sketch-holder"></div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@2.3.3/lib/p5.min.js"></script>
+    <script src="sketch.js"></script>
+  </body>
+</html>
