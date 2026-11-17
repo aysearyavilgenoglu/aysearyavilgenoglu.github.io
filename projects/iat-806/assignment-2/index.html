@@ -42,6 +42,26 @@
         color: #fff;
       }
 
+      .page-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-bottom: 22px;
+      }
+
+      .page-links .back-link {
+        margin-bottom: 0;
+      }
+
+      .source-link {
+        color: #d0c9e8;
+        text-decoration: none;
+      }
+
+      .source-link:hover {
+        color: #fff;
+      }
+
       .game-panel {
         padding: clamp(18px, 4vw, 36px);
         border: 1px solid rgba(220, 207, 255, 0.16);
@@ -141,7 +161,17 @@
   </head>
   <body>
     <main class="page-shell">
-      <a href="../../../iat806.html" class="back-link">← Back to IAT806</a>
+      <nav class="page-links" aria-label="Assignment links">
+        <a href="../../../iat806.html" class="back-link">← Back to IAT806</a>
+        <a
+          href="https://github.com/aysearyavilgenoglu/aysearyavilgenoglu.github.io/tree/main/projects/iat-806/assignment-2"
+          class="source-link"
+          target="_blank"
+          rel="noreferrer"
+        >
+          View source on GitHub ↗
+        </a>
+      </nav>
       <section class="game-panel">
         <p class="eyebrow">Assignment 2 · Body Game</p>
         <h1>Cosmic Laundry</h1>
