@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lab 06 - Neon Ball Garden | Ayse Arya Vilgenoglu</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        margin: 0;
+        background: #080b18;
+        color: #eef2ff;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      .page-shell {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 32px 20px 60px;
+      }
+
+      .canvas-wrap {
+        padding: 24px;
+        overflow: hidden;
+        background: linear-gradient(145deg, #121a35, #101324 68%);
+        border: 1px solid rgba(133, 166, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .eyebrow {
+        color: #8ea8ff;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .intro {
+        max-width: 680px;
+        color: #b6bfd9;
+      }
+
+      #sketch-holder {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      canvas {
+        display: block;
+        max-width: 100%;
+        height: auto !important;
+        border: 1px solid rgba(147, 168, 255, 0.16);
+        border-radius: 14px;
+      }
+
+      .hint {
+        margin: 14px 0 0;
+        color: #8792b2;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+      .camera-status {
+        margin: 12px 0 0;
+        color: #b6bfd9;
+        font-size: 0.85rem;
+        text-align: center;
+      }
+
+      .camera-note {
+        margin: 6px 0 0;
+        color: #8792b2;
+        font-size: 0.78rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <a href="../../../iat806.html" class="btn btn-outline-light btn-sm mb-3"
+        >← Back to IAT806</a
+      >
+      <section class="canvas-wrap">
+        <p class="eyebrow mb-2">Lab 06 · Ball class + body segmentation</p>
+        <h1 class="h2 mb-2">Neon Ball Garden</h1>
+        <p class="intro mb-3">
+          A little universe of glowing balls that react when you click them or
+          move behind them.
+        </p>
+        <div id="sketch-holder"></div>
+        <p class="hint">Click a ball or let a ball cross your silhouette.</p>
+        <p class="camera-status" id="camera-status" role="status" aria-live="polite">
+          Preparing the camera…
+        </p>
+        <p class="camera-note">
+          Camera access requires localhost or an HTTPS page. The webcam preview
+          is hidden.
+        </p>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@2.3.3/lib/p5.min.js"></script>
+    <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+    <script src="Ball.js"></script>
+    <script src="sketch.js"></script>
+  </body>
+</html>

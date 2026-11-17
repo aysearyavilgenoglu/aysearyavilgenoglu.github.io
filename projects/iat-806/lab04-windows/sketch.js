@@ -3,16 +3,24 @@
 // Click the sky (or scroll): zoom out, and more buildings appear.
 
 // ---------- ARRAYS ----------
-let buildings = [];   // every building in the city
-let stars = [];       // star positions for the night sky
-const COLORS = ["#e8a87c", "#c38d9e", "#41b3a3", "#e27d60", "#85cdca", "#f6d186", "#a3a1c9"];
+let buildings = []; // every building in the city
+let stars = []; // star positions for the night sky
+const COLORS = [
+  "#e8a87c",
+  "#c38d9e",
+  "#41b3a3",
+  "#e27d60",
+  "#85cdca",
+  "#f6d186",
+  "#a3a1c9",
+];
 const MOODS = ["happy", "laugh", "sleep", "wave"];
 
 // ---------- SETTINGS ----------
-let zoom = 1;         // how close we are right now
-let targetZoom = 1;   // where the zoom is moving to (makes it smooth)
-let night = false;    // day or night
-const GROUND = 50;    // height of the street at the bottom
+let zoom = 1; // how close we are right now
+let targetZoom = 1; // where the zoom is moving to (makes it smooth)
+let night = false; // day or night
+const GROUND = 50; // height of the street at the bottom
 
 function setup() {
   createCanvas(900, 600);
@@ -64,12 +72,12 @@ function makeBuilding(x) {
     h: random(160, 420),
     type: random(["rect", "round"]),
     col: random(COLORS),
-    roof: random() < 0.4,       // some rectangle buildings get a triangle roof
-    windows: []
+    roof: random() < 0.4, // some rectangle buildings get a triangle roof
+    windows: [],
   };
 
-  let ww = 24;                               // window width
-  let wh = b.type === "round" ? 24 : 30;     // round windows are circles
+  let ww = 24; // window width
+  let wh = b.type === "round" ? 24 : 30; // round windows are circles
   let cols = max(1, floor((b.w - 10) / (ww + 10)));
   let rows = max(1, floor((b.h - 40) / 44));
   let gapX = (b.w - cols * ww) / (cols + 1);
@@ -77,15 +85,15 @@ function makeBuilding(x) {
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       b.windows.push({
-        x: gapX + c * (ww + gapX),  // position inside the building
+        x: gapX + c * (ww + gapX), // position inside the building
         y: 22 + r * 44,
         w: ww,
         h: wh,
         open: false,
-        t: 0,                       // 0 = closed, 1 = fully open (for animation)
-        person: random() < 0.85,    // most windows have someone inside
+        t: 0, // 0 = closed, 1 = fully open (for animation)
+        person: random() < 0.85, // most windows have someone inside
         mood: random(MOODS),
-        lightOn: random() < 0.4     // at night some windows are lit
+        lightOn: random() < 0.4, // at night some windows are lit
       });
     }
   }
@@ -129,7 +137,14 @@ function drawBuilding(b) {
   if (b.type === "rect") {
     rect(b.x, -b.h, b.w, b.h);
     if (b.roof) {
-      triangle(b.x - 6, -b.h, b.x + b.w + 6, -b.h, b.x + b.w / 2, -b.h - b.w * 0.45);
+      triangle(
+        b.x - 6,
+        -b.h,
+        b.x + b.w + 6,
+        -b.h,
+        b.x + b.w / 2,
+        -b.h - b.w * 0.45,
+      );
     } else {
       // antenna with a blinking light
       stroke(60);
@@ -168,9 +183,9 @@ function drawWindow(b, win) {
   // the glass
   noStroke();
   if (win.t > 0.02) {
-    fill(255, 225, 140);                 // open: warm light
+    fill(255, 225, 140); // open: warm light
   } else if (night && win.lightOn) {
-    fill(255, 210, 110, 170);            // night: some lights are on
+    fill(255, 210, 110, 170); // night: some lights are on
   } else if (night) {
     fill(35, 45, 80);
   } else {
@@ -194,7 +209,7 @@ function drawWindow(b, win) {
   // curtains slide open on rectangle windows
   if (!round && win.t < 0.98) {
     fill(night ? color(90, 60, 110) : color(230, 120, 140));
-    let cw = (1 - win.t) * win.w / 2;
+    let cw = ((1 - win.t) * win.w) / 2;
     rect(x, y, cw, win.h);
     rect(x + win.w - cw, y, cw, win.h);
   }
@@ -270,7 +285,12 @@ function drawPerson(s, mood) {
       let a = sin(frameCount * 0.2) * 0.5;
       stroke(246, 206, 178);
       strokeWeight(s * 0.1);
-      line(s * 0.4, s * 0.4, s * 0.4 + cos(-1.2 + a) * s * 0.4, s * 0.4 + sin(-1.2 + a) * s * 0.4);
+      line(
+        s * 0.4,
+        s * 0.4,
+        s * 0.4 + cos(-1.2 + a) * s * 0.4,
+        s * 0.4 + sin(-1.2 + a) * s * 0.4,
+      );
     }
   }
   noStroke();
@@ -333,16 +353,20 @@ function drawHelp() {
   fill(night ? 255 : 30);
   noStroke();
   textSize(13);
-  text("click window = open  ·  click sky / scroll = zoom out  ·  SPACE = open random  ·  N = night  ·  C = close all  ·  +/- = zoom  ·  R = new city", 12, 20);
+  text(
+    "click window = open  ·  click sky / scroll = zoom out  ·  SPACE = open random  ·  N = night  ·  C = close all  ·  +/- = zoom  ·  R = new city",
+    12,
+    20,
+  );
 }
 
 // ---------- MOUSE ----------
 function mousePressed() {
   let w = findWindow(mouseX, mouseY);
   if (w) {
-    w.open = !w.open;          // open it, or close it if it was open
+    w.open = !w.open; // open it, or close it if it was open
   } else {
-    targetZoom = max(0.15, targetZoom * 0.8);   // clicked the sky: zoom out
+    targetZoom = max(0.15, targetZoom * 0.8); // clicked the sky: zoom out
   }
 }
 
@@ -377,5 +401,18 @@ function keyPressed() {
   } else if (key === "r" || key === "R") {
     buildings = [];
     targetZoom = 1;
+  }
+}
+
+class Ball {
+  constructor() {
+    this.x = 400;
+    this.y = 500;
+    this.color = color(120, 130, 140);
+  }
+  // methods, function that are defined for a class
+  show() {
+    fill(120, 130, 140);
+    circle(this.x, this.y, 50);
   }
 }
