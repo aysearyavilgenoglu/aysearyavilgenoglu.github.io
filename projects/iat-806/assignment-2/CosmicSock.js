@@ -26,17 +26,12 @@ class CosmicSock {
     ellipse(2, 7, 42, 18);
 
     fill(this.tint);
-    beginShape();
-    vertex(-10, -19);
-    vertex(10, -19);
-    vertex(10, 4);
-    bezierVertex(10, 11, 16, 13, 23, 16);
-    bezierVertex(31, 20, 27, 29, 19, 29);
-    vertex(-8, 29);
-    bezierVertex(-19, 29, -21, 21, -13, 15);
-    vertex(-8, 10);
-    vertex(-10, 4);
-    endShape(CLOSE);
+    rect(-10, -19, 20, 42, 8);
+    push();
+    translate(5, 13);
+    rotate(HALF_PI);
+    rect(-9, -17, 18, 30, 8);
+    pop();
 
     fill(255, 255, 255, 170);
     rect(-10, -19, 20, 6, 3);
@@ -50,18 +45,21 @@ class CosmicSock {
     pop();
   }
 
-  touchesBody(mask, canvasWidth, canvasHeight) {
-    const maskX = constrain(
-      floor(((canvasWidth - this.x) / canvasWidth) * mask.width),
-      0,
-      mask.width - 1,
+  touchesBody(bodyMap, canvasWidth, canvasHeight) {
+    const column = floor(
+      (this.x / canvasWidth) * MASK_COLUMNS,
     );
-    const maskY = constrain(
-      floor((this.y / canvasHeight) * mask.height),
-      0,
-      mask.height - 1,
-    );
-    return mask.get(maskX, maskY)[3] < 128;
+    const row = floor((this.y / canvasHeight) * MASK_ROWS);
+
+    for (let rowOffset = -2; rowOffset <= 2; rowOffset++) {
+      for (let columnOffset = -2; columnOffset <= 2; columnOffset++) {
+        const sampleColumn = constrain(column + columnOffset, 0, MASK_COLUMNS - 1);
+        const sampleRow = constrain(row + rowOffset, 0, MASK_ROWS - 1);
+        if (bodyMap[sampleRow * MASK_COLUMNS + sampleColumn]) return true;
+      }
+    }
+
+    return false;
   }
 
   missed(canvasHeight) {

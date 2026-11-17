@@ -1,5 +1,9 @@
-const CANVAS_WIDTH = 720;
-const CANVAS_HEIGHT = 480;
+const CANVAS_WIDTH = 480;
+const CANVAS_HEIGHT = 360;
+const CAMERA_WIDTH = 320;
+const CAMERA_HEIGHT = 240;
+const MASK_COLUMNS = 60;
+const MASK_ROWS = 45;
 const GAME_DURATION = 45;
 const TARGET_SCORE = 12;
 const MAX_MISSES = 3;
@@ -10,6 +14,8 @@ let socks = [];
 let video;
 let bodySegmentation;
 let segmentationResult = null;
+let bodyMap = new Uint8Array(MASK_COLUMNS * MASK_ROWS);
+let silhouetteLayer;
 let gameState = "start";
 let score = 0;
 let misses = 0;
@@ -23,12 +29,15 @@ function setup() {
   const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
   canvas.parent("sketch-holder");
   pixelDensity(1);
+  frameRate(30);
+  silhouetteLayer = createGraphics(MASK_COLUMNS, MASK_ROWS);
+  silhouetteLayer.pixelDensity(1);
 
   const startButton = document.querySelector("#start-game");
   startButton.addEventListener("click", startGame);
 
   video = createCapture(VIDEO);
-  video.size(CANVAS_WIDTH, CANVAS_HEIGHT);
+  video.size(CAMERA_WIDTH, CAMERA_HEIGHT);
   video.hide();
   video.elt.addEventListener("loadeddata", () => {
     cameraReady = true;
@@ -37,6 +46,13 @@ function setup() {
   video.elt.addEventListener("error", () => {
     setCameraStatus("Camera video failed to start. Check camera permission and reload the page.");
   });
+  window.setTimeout(() => {
+    if (!cameraReady) {
+      setCameraStatus(
+        "Camera is not available yet. Allow permission and close other apps or tabs using it.",
+      );
+    }
+  }, 12000);
 
   setCameraStatus("Allow camera access. The game will appear while the body model loads.");
   loadBodyModel();
@@ -74,18 +90,8 @@ function draw() {
 
 function drawCameraBackground() {
   background("#17172a");
-  if (video && video.elt.readyState >= 2) {
-    push();
-    translate(width, 0);
-    scale(-1, 1);
-    image(video, 0, 0, width, height);
-    pop();
-    noStroke();
-    fill(18, 18, 35, 155);
-    rect(0, 0, width, height);
-  } else {
-    drawStars();
-  }
+  drawStars();
+  image(silhouetteLayer, 0, 0, width, height);
 
   noFill();
   stroke(230, 215, 255, 45);
@@ -178,7 +184,7 @@ function updateGame() {
     const sock = socks[i];
     sock.update();
 
-    if (segmentationResult && sock.touchesBody(segmentationResult.mask, width, height)) {
+    if (segmentationResult && sock.touchesBody(bodyMap, width, height)) {
       socks.splice(i, 1);
       score++;
     } else if (sock.missed(height)) {
@@ -263,9 +269,53 @@ function createSock(x, y) {
 }
 
 function gotResults(result) {
-  if (result) {
+  if (result && result.mask) {
     segmentationResult = result;
+    updateBodyMask(result.mask);
   }
+}
+
+function updateBodyMask(mask) {
+  mask.loadPixels();
+  if (!mask.pixels || mask.pixels.length === 0) {
+    setCameraStatus("The body model returned an empty mask. Reload the page to try again.");
+    return;
+  }
+
+  const pixelDensity = Math.sqrt(
+    mask.pixels.length / (mask.width * mask.height * 4),
+  );
+  const pixelWidth = mask.width * pixelDensity;
+  bodyMap.fill(0);
+  silhouetteLayer.clear();
+  silhouetteLayer.loadPixels();
+
+  for (let row = 0; row < MASK_ROWS; row++) {
+    const maskY = constrain(
+      floor(((row + 0.5) / MASK_ROWS) * mask.height),
+      0,
+      mask.height - 1,
+    );
+    const pixelY = floor(maskY * pixelDensity);
+
+    for (let column = 0; column < MASK_COLUMNS; column++) {
+      const screenX = floor(((column + 0.5) / MASK_COLUMNS) * mask.width);
+      const maskX = mask.width - 1 - screenX;
+      const pixelX = floor(maskX * pixelDensity);
+      const alphaIndex = 4 * (pixelY * pixelWidth + pixelX) + 3;
+      const alpha = mask.pixels[alphaIndex];
+
+      if (alpha >= 128) continue;
+
+      bodyMap[row * MASK_COLUMNS + column] = 1;
+      const outputIndex = 4 * (row * MASK_COLUMNS + column);
+      silhouetteLayer.pixels[outputIndex] = 123;
+      silhouetteLayer.pixels[outputIndex + 1] = 245;
+      silhouetteLayer.pixels[outputIndex + 2] = 220;
+      silhouetteLayer.pixels[outputIndex + 3] = 220 - alpha;
+    }
+  }
+  silhouetteLayer.updatePixels();
 }
 
 function setCameraStatus(message) {
