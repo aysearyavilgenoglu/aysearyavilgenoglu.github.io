@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Assignment 2 - Cosmic Laundry | Ayse Arya Vilgenoglu</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Segoe UI", sans-serif;
+        background: #11121e;
+        color: #f5f3ee;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        background:
+          radial-gradient(ellipse at 82% 10%, rgba(120, 74, 164, 0.25), transparent 34rem),
+          #11121e;
+      }
+
+      .page-shell {
+        width: min(100% - 32px, 1020px);
+        margin: 0 auto;
+        padding: 32px 0 56px;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: 22px;
+        color: #d0c9e8;
+        text-decoration: none;
+      }
+
+      .back-link:hover {
+        color: #fff;
+      }
+
+      .game-panel {
+        padding: clamp(18px, 4vw, 36px);
+        border: 1px solid rgba(220, 207, 255, 0.16);
+        border-radius: 22px;
+        background: rgba(26, 27, 43, 0.92);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: #c9a7ff;
+        font-size: 0.75rem;
+        font-weight: 750;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.2rem, 8vw, 4.5rem);
+        letter-spacing: -0.07em;
+        line-height: 0.98;
+      }
+
+      .intro {
+        max-width: 680px;
+        margin: 16px 0 22px;
+        color: #c5c3d3;
+        line-height: 1.65;
+      }
+
+      #sketch-holder {
+        width: 100%;
+        overflow: hidden;
+        border: 1px solid rgba(220, 207, 255, 0.16);
+        border-radius: 14px;
+        background: #11121e;
+      }
+
+      canvas {
+        display: block;
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      .game-controls {
+        display: flex;
+        justify-content: center;
+        margin-top: 18px;
+      }
+
+      #start-game {
+        min-width: 180px;
+        padding: 12px 22px;
+        border: 0;
+        border-radius: 999px;
+        background: #d5ff6e;
+        color: #1c2030;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 160ms ease, background-color 160ms ease;
+      }
+
+      #start-game:hover:not(:disabled) {
+        transform: translateY(-2px);
+        background: #e4ff9d;
+      }
+
+      #start-game:disabled {
+        cursor: wait;
+        opacity: 0.58;
+      }
+
+      .camera-status,
+      .camera-note {
+        margin: 12px 0 0;
+        color: #a9a7bb;
+        font-size: 0.88rem;
+        text-align: center;
+      }
+
+      .camera-note {
+        color: #858399;
+        font-size: 0.78rem;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <a href="../../../iat806.html" class="back-link">← Back to IAT806</a>
+      <section class="game-panel">
+        <p class="eyebrow">Assignment 2 · Body Game</p>
+        <h1>Cosmic Laundry</h1>
+        <p class="intro">
+          The moon's laundry has escaped into space! Move your body to catch
+          12 falling cosmic socks before three slip past. You have 45 seconds
+          and only your silhouette to help.
+        </p>
+        <div id="sketch-holder"></div>
+        <div class="game-controls">
+          <button id="start-game" type="button" disabled>
+            Loading camera…
+          </button>
+        </div>
+        <p id="camera-status" class="camera-status" role="status" aria-live="polite">
+          Preparing the camera and body model…
+        </p>
+        <p class="camera-note">
+          Allow camera access to play. The game mirrors your camera so your
+          movement feels natural. Camera access requires HTTPS or localhost.
+        </p>
+      </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/p5@2.3.3/lib/p5.min.js"></script>
+    <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+    <script src="CosmicSock.js"></script>
+    <script src="sketch.js"></script>
+  </body>
+</html>
